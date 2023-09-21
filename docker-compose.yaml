@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      - DB_DSN=${DB_DSN:-tasked:tasked@tcp(db:3306)/tasked?charset=utf8mb4&parseTime=True&loc=Local}
+      - JWT_SECRET=${JWT_SECRET:-secret}
+    volumes:
+      - ./:/app
+  db:
+    image: mysql:8.1
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: tasked
+      MYSQL_USER: tasked
+      MYSQL_PASSWORD: tasked
+      MYSQL_ROOT_PASSWORD: tasked
+    ports:
+      - 3306:3306
