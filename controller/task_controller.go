@@ -66,7 +66,7 @@ func (t *TaskController) Read(c echo.Context) error {
 	var task *model.Task
 
 	err := database.ORM().Where(
-		"users_id = ?",
+		"user_id = ?",
 		authentication.AuthID(c),
 	).First(&task, c.Param("id")).Error
 

@@ -19,7 +19,7 @@ type User struct {
 }
 
 func (u *User) IsEmailUnique(email string) bool {
-	err := database.ORM().First(u, "email = ?", email).Error
+	err := database.ORM().Where("id != ?", u.ID).First(&User{}, "email = ?", email).Error
 
 	return errors.Is(err, gorm.ErrRecordNotFound)
 }

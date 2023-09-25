@@ -8,8 +8,8 @@ import (
 
 type UpdateTaskInput struct {
 	ID        string
-	Name      string    `json:"name" validate:"required"`
-	ExpiresAt time.Time `json:"expires_at" validate:"required"`
+	Name      string `json:"name" validate:"required"`
+	ExpiresAt string `json:"expires_at" validate:"required"`
 }
 
 func UpdateTask(input *UpdateTaskInput) (*model.Task, error) {
@@ -23,9 +23,15 @@ func UpdateTask(input *UpdateTaskInput) (*model.Task, error) {
 		return task, err
 	}
 
-	err := database.ORM().Model(&task).Updates(model.Task{
+	exp, err := time.Parse(time.DateTime, input.ExpiresAt)
+
+	if err != nil {
+		return &model.Task{}, err
+	}
+
+	err = database.ORM().Model(&task).Updates(model.Task{
 		Name:      input.Name,
-		ExpiresAt: input.ExpiresAt,
+		ExpiresAt: exp,
 	}).Error
 
 	if err != nil {

@@ -29,11 +29,11 @@ func main() {
 			c.JSON(http.StatusNotFound, map[string]interface{}{
 				"message": "not found",
 			})
+
+			return
 		}
 
-		c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"message": "Internal server error",
-		})
+		e.DefaultHTTPErrorHandler(err, c)
 	}
 
 	e.Use(echojwt.WithConfig(echojwt.Config{
@@ -45,6 +45,7 @@ func main() {
 			return new(authentication.Claims)
 		},
 	}))
+
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
