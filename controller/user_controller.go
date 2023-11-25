@@ -24,7 +24,7 @@ func (t *UserController) Create(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusCreated, user)
 }
 
 func (t *UserController) Update(c echo.Context) error {

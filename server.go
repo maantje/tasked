@@ -2,31 +2,24 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
-	"os"
-	"tasked/authentication"
 	"tasked/controller"
 	"tasked/database"
 	"tasked/database/migration"
 
-	"github.com/golang-jwt/jwt/v5"
-	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
 )
 
 func main() {
-	fmt.Println("DB_HOST:", os.Getenv("DB_HOST"))
-
 	database.Init()
 	migration.Migrate()
 
 	e := echo.New()
 	e.HTTPErrorHandler = func(err error, c echo.Context) {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			c.JSON(http.StatusNotFound, map[string]interface{}{
+			_ = c.JSON(http.StatusNotFound, map[string]interface{}{
 				"message": "not found",
 			})
 
@@ -36,15 +29,15 @@ func main() {
 		e.DefaultHTTPErrorHandler(err, c)
 	}
 
-	e.Use(echojwt.WithConfig(echojwt.Config{
-		SigningKey: []byte(os.Getenv("JWT_SECRET")),
-		Skipper: func(c echo.Context) bool {
-			return c.Request().URL.String() == "/login" || (c.Request().URL.String() == "/users" && c.Request().Method == "POST")
-		},
-		NewClaimsFunc: func(c echo.Context) jwt.Claims {
-			return new(authentication.Claims)
-		},
-	}))
+	// e.Use(echojwt.WithConfig(echojwt.Config{
+	// 	SigningKey: []byte(os.Getenv("JWT_SECRET")),
+	// 	Skipper: func(c echo.Context) bool {
+	// 		return c.Request().URL.String() == "/login" || (c.Request().URL.String() == "/users" && c.Request().Method == "POST")
+	// 	},
+	// 	NewClaimsFunc: func(c echo.Context) jwt.Claims {
+	// 		return new(authentication.Claims)
+	// 	},
+	// }))
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
