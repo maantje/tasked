@@ -44,6 +44,10 @@ func main() {
 
 	tc := &controller.TaskController{}
 
+	e.GET("/hello", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World")
+	})
+
 	e.GET("/tasks", tc.Index)
 	e.GET("/tasks/:id", tc.Read)
 	e.PATCH("/tasks/:id", tc.Update)

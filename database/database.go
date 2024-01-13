@@ -17,6 +17,10 @@ func ORM() *gorm.DB {
 func Init() {
 	db, err := gorm.Open(mysql.Open(os.Getenv("DB_DSN")), &gorm.Config{})
 
+	sqlDB, err := db.DB()
+	sqlDB.SetMaxIdleConns(2)
+	sqlDB.SetMaxOpenConns(5)
+
 	database = db
 
 	if err != nil {
